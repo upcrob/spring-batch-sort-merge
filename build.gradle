@@ -1,0 +1,50 @@
+/*
+ * Build script for sort-merge jar.
+ */
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+jar.baseName = 'upcrob-sortmerge'
+jar.version = '1.0.0'
+
+repositories {
+	mavenCentral()
+}
+
+sourceSets {
+	main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+    
+    example {
+        java {
+            srcDir 'src/example/java'
+        }
+        resources {
+            srcDir 'src/example/resources'
+        }
+    }
+}
+
+dependencies {
+	compile group: 'commons-logging', name: 'commons-logging', version: '1.1.2'
+	compile group: 'org.springframework.batch', name: 'spring-batch-core', version: '2.1.8.RELEASE'
+
+	exampleCompile files(fileTree(dir: 'build/libs', includes: ['*.jar']))
+	exampleCompile group: 'commons-logging', name: 'commons-logging', version: '1.1.2'
+	exampleCompile group: 'org.springframework.batch', name: 'spring-batch-core', version: '2.1.8.RELEASE'
+	exampleCompile group: 'aopalliance', name: 'aopalliance', version: '1.0'
+	exampleCompile group: 'org.springframework.batch', name: 'spring-batch-infrastructure', version: '2.1.8.RELEASE'
+	exampleCompile group: 'org.springframework', name: 'spring-core', version: '3.2.2.RELEASE'
+	exampleCompile group: 'org.springframework', name: 'spring-aop', version: '3.2.2.RELEASE'
+	exampleCompile group: 'org.springframework', name: 'spring-beans', version: '3.2.2.RELEASE'
+	exampleCompile group: 'org.springframework', name: 'spring-context', version: '3.2.2.RELEASE'
+	exampleCompile group: 'org.springframework', name: 'spring-expression', version: '3.2.2.RELEASE'
+	exampleCompile group: 'org.springframework', name: 'spring-tx', version: '3.2.2.RELEASE'
+}

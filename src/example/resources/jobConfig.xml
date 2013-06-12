@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- Set application context -->
+	<import resource="applicationContext.xml" />
+
+	<!-- Instance of our Person bean I/O factory -->
+	<bean id="personBeanIoFactory" class="com.upcrob.example.spring.batch.PersonBeanIoFactory" />
+
+	<!-- Sort job input resource -->
+	<bean id="sortInputResource" class="org.springframework.core.io.FileSystemResource">
+		<constructor-arg>
+			<bean class="java.io.File">
+				<constructor-arg value="src/example/resources/sort_input.txt" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<!-- Sort job output resource -->
+	<bean id="sortOutputResource" class="org.springframework.core.io.FileSystemResource">
+		<constructor-arg>
+			<bean class="java.io.File">
+				<constructor-arg value="sort_output.txt" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<!-- Merge input resource 1 -->
+	<bean id="mergeInputResource1" class="org.springframework.core.io.FileSystemResource">
+		<constructor-arg>
+			<bean class="java.io.File">
+				<constructor-arg value="src/example/resources/merge_input_1.txt" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<!-- Merge input resource 2 -->
+	<bean id="mergeInputResource2" class="org.springframework.core.io.FileSystemResource">
+		<constructor-arg>
+			<bean class="java.io.File">
+				<constructor-arg value="src/example/resources/merge_input_2.txt" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<!-- Merge output resource -->
+	<bean id="mergeOutputResource" class="org.springframework.core.io.FileSystemResource">
+		<constructor-arg>
+			<bean class="java.io.File">
+				<constructor-arg value="merge_output.txt" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<!-- Use the current working directory as the temporary directory -->
+	<bean id="tmpDirectory" class="org.springframework.core.io.FileSystemResource">
+		<constructor-arg>
+			<bean class="java.io.File">
+				<constructor-arg value="." />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<!-- Simple comparator for Person beans -->
+	<bean id="personComparator" class="com.upcrob.example.spring.batch.PersonComparator" />
+
+	<!-- Sort tasklet -->
+	<bean id="sorter" class="com.upcrob.spring.batch.tasklet.FlatFileSortTasklet">
+		<property name="inputResource" ref="sortInputResource" />
+		<property name="outputResource" ref="sortOutputResource" />
+		<property name="comparator" ref="personComparator" />
+		<property name="inputIoFactory" ref="personBeanIoFactory" />
+		<property name="outputIoFactory" ref="personBeanIoFactory" />
+		<property name="tmpDirectory" ref="tmpDirectory" />
+	</bean>
+
+	<!-- Merge tasklet -->
+	<bean id="merger" class="com.upcrob.spring.batch.tasklet.FlatFileMergeTasklet">
+		<property name="readers">
+			<list>
+				<bean factory-bean="personBeanIoFactory" factory-method="getReader">
+					<constructor-arg ref="mergeInputResource1" />
+				</bean>
+				<bean factory-bean="personBeanIoFactory" factory-method="getReader">
+					<constructor-arg ref="mergeInputResource2" />
+				</bean>
+			</list>
+		</property>
+		<property name="writer">
+			<bean factory-bean="personBeanIoFactory" factory-method="getWriter">
+				<constructor-arg ref="mergeOutputResource" />
+			</bean>
+		</property>
+		<property name="comparator" ref="personComparator" />
+	</bean>
+
+	<!-- Tasklet step bean -->
+	<bean id="taskletStep" abstract="true"
+		class="org.springframework.batch.core.step.tasklet.TaskletStep">
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="jobRepository" ref="jobRepository" />
+	</bean>
+
+	<!-- Simple sorting example job -->
+	<bean id="simpleSortJob" class="org.springframework.batch.core.job.SimpleJob">
+		<property name="name" value="simpleJob" />
+		<property name="steps">
+			<list>
+				<bean parent="taskletStep">
+					<property name="tasklet" ref="sorter" />
+				</bean>
+			</list>
+		</property>
+		<property name="jobRepository" ref="jobRepository" />
+	</bean>
+
+	<!-- Simple merging example job -->
+	<bean id="simpleMergeJob" class="org.springframework.batch.core.job.SimpleJob">
+		<property name="name" value="simpleJob" />
+		<property name="steps">
+			<list>
+				<bean parent="taskletStep">
+					<property name="tasklet" ref="merger" />
+				</bean>
+			</list>
+		</property>
+		<property name="jobRepository" ref="jobRepository" />
+	</bean>
+</beans> 
