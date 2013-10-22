@@ -48,3 +48,7 @@ dependencies {
 	exampleCompile group: 'org.springframework', name: 'spring-expression', version: '3.2.2.RELEASE'
 	exampleCompile group: 'org.springframework', name: 'spring-tx', version: '3.2.2.RELEASE'
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.6'
+}
