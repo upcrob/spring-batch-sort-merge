@@ -14,13 +14,13 @@ This project is built using <a href="http://www.gradle.org">Gradle</a>.
 To build, simply type the following at the command prompt while in
 the directory with the `build.gradle` file:
 
-	gradle build
+	./gradlew build
 
 The jar will subsequently be generated in build/libs.
 
 To build an Eclipse project file, use the following command:
 
-	gradle eclipse
+	./gradlew eclipse
 
 Usage
 -----
