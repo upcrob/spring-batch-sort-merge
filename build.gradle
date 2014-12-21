@@ -1,7 +1,3 @@
-/*
- * Build script for sort-merge jar.
- */
-
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
