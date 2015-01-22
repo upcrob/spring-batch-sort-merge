@@ -8,6 +8,22 @@ tasklets for use within Spring Batch applications.  These tasklets
 are designed to function in out-of-core scenarios where very large
 input files may not fit into main memory.
 
+Including in a Gradle Project
+-----------------------------
+
+The binary version of this library can be included in a Gradle project by adding the following to the build script (where **VERSION** is the current version of the library):
+
+	repositories {
+		maven {
+			url 'https://dl.bintray.com/upcrob/maven/'
+		}
+	}
+	
+	dependencies {
+		compile 'com.upcrob.spring.batch:spring-batch-sort-merge:VERSION'
+	}
+
+
 Building
 --------
 This project is built using <a href="http://www.gradle.org">Gradle</a>.
